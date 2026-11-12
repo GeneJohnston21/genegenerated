@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="Placeholder: name ornament">
+<defs><g id="sf" stroke-linecap="round"><path d="M0-14V14M-12-7 12 7M-12 7 12-7"/><path d="M-4-10 0-14 4-10M-4 10 0 14 4 10"/></g><radialGradient id="g" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#c8384f"/><stop offset="1" stop-color="#7e1a2b"/></radialGradient></defs>
+<rect width="800" height="800" fill="#f2ece0"/>
+<path d="M400 40v95" stroke="#8a7a5c" stroke-width="4"/>
+<rect x="365" y="130" width="70" height="50" rx="8" fill="#b07d1e"/>
+<circle cx="400" cy="440" r="270" fill="url(#g)"/>
+<text x="400" y="455" font-family="'Brush Script MT','Segoe Script',cursive" font-size="130" fill="#f6e7c1" text-anchor="middle">Your Name</text>
+<text x="400" y="560" font-family="Georgia,serif" font-size="60" font-weight="700" fill="#f6e7c1" text-anchor="middle" letter-spacing="8">2026</text>
+<g stroke="#ffffff" stroke-width="4" fill="none"><use href="#sf" x="270" y="300"/><use href="#sf" x="530" y="300"/><use href="#sf" x="400" y="630"/></g>
+<text x="400" y="770" font-family="system-ui,sans-serif" font-size="22" fill="#5a645f" text-anchor="middle">PLACEHOLDER — product photo coming soon</text>
+</svg>
