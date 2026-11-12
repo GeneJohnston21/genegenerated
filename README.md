@@ -1,141 +1,99 @@
 # genegenerated.com
 
-Static site for **Gene Generated** — original, designed-in-house multicolor 3D-printed ornaments.
+The shop site for **Gene Generated** personalized ornaments.
 
-Plain HTML/CSS with a few lines of optional JS. No build step, no dependencies. Open `index.html` in a browser to preview, or run `python3 -m http.server` in this folder and visit http://localhost:8000.
+- **Home** (`/`): the hero with a 3D ornament you can spin, close-ups, the two ornament styles, the gallery, how it works, craft-fair info, FAQ and contact.
+- **Designer** (`/design.html`): type a name or caption, pick bauble or star and colors, spin it in 3D, add it to the cart, and pay with Stripe.
+- **Booth** (`/booth.html`): the page the booth QR code opens. There are two tabs, **From the table** (pre-made ornaments: tap, pay, take it home) and **Design one**, with a pay bar fixed at the bottom of the screen.
+
+It's plain HTML, CSS and JavaScript with no build step. The only server code is one small Netlify function that creates the Stripe checkout.
+
+## How the pieces fit
 
 ```
-index.html          the whole one-page site (hero, ornaments, how it works, craft fair, order form, FAQ, contact)
-styles.css          all styles; light + dark mode via prefers-color-scheme
-script.js           shows the photo / shipping-address fields only when relevant (form works without it)
-thanks.html         where the order form lands after submitting
-404.html            not-found page
-assets/img/         favicon + placeholder SVGs (swap for real photos/renders)
-CNAME               custom domain for GitHub Pages (harmless on other hosts)
-.nojekyll           stops GitHub Pages running Jekyll
-robots.txt, sitemap.xml
+index.html, design.html, booth.html, thanks.html, 404.html
+styles.css                     all styling ("String of Lights": midnight + tree-light colors)
+data/catalog.json              PRICES, shipping, color schemes, limits  ← edit this
+data/table-stock.json          pre-made names on the booth table        ← edit this
+data/gallery.json              gallery entries                          ← edit this
+assets/js/pricing.js           cart checks + pricing (shared by browser AND checkout function)
+assets/js/ornament3d.js        3D preview (three.js)
+assets/js/orn2d.js             flat drawing (gallery, cart, fallback when 3D isn't available)
+assets/js/designer.js          designer controls
+assets/js/cartview.js, shop.js cart (kept in the visitor's browser) + checkout call
+assets/js/home.js, design-page.js, booth.js, thanks.js   page scripts
+assets/vendor/three.module.min.js   three.js r160 (MIT, self-hosted)
+assets/fonts/                  Fredoka, Nunito, Pacifico (OFL, self-hosted)
+assets/qr/booth-qr-print.png   1800px QR code → genegenerated.com/booth.html (print this)
+netlify/functions/create-checkout.js   makes the Stripe Checkout session
+netlify.toml                   Netlify settings (+ /api/checkout, /booth, /design shortcuts)
 ```
 
-## Before launch: TODOs
+### How checkout works
+1. The cart lives in the visitor's browser.
+2. **Checkout** sends only the cart contents (names, shapes, colors, quantities) to `/api/checkout`, never prices.
+3. The function re-checks everything and works out the price from `data/catalog.json`, using the same `pricing.js` the page uses. That covers the 3-for-$45 deal, the photo-install add-on and shipping. It then opens a Stripe Checkout page.
+4. The customer pays with a card, Apple Pay or Google Pay. Stripe collects their email and phone, plus a US shipping address if anything needs shipping. Table-only orders skip shipping. Stripe also asks: "Show it in our gallery? (first name only)".
+5. They land back on `thanks.html`. At the booth, this screen shows "Paid ✓ Show Gene" and the items to hand over.
 
-Every unconfirmed fact is marked on the page with a yellow **TODO** badge (`<mark class="todo">`) or an HTML comment `TODO(Gene)`. Find them all with:
+**Where you see orders:** Stripe Dashboard → Payments. Each payment lists the line items, and under **Metadata** each item's exact design, for example `2x NAME "Emma" 2026 bauble classic`. `INSTALL-PHOTO` means you email the customer for their photo. The gallery answer is under the checkout session's custom fields. Turn on email alerts in Stripe → Settings → Notifications → "Successful payments".
 
-```sh
-grep -n "TODO" index.html
-```
+**Safety switch:** while `"pricesConfirmed": false` in `data/catalog.json`, the site shows TODO badges, and **live (real-money) checkout is refused**. Test-mode checkout still works.
 
-Delete each badge once the real value is in. Current list:
+## Before launch: TODO list
 
-| Where | What to fill in |
+Find them all with `grep -rn "TODO" --include=*.html --include=*.json .`
+
+| Where | What |
 |---|---|
-| Name ornament card | Confirm price ($12–20 each, 3 for $45) |
-| Photo ornament card | Confirm price ($18–25) |
-| Craft fair | Date & hours (around Nov 21–22, 2026) |
-| Craft fair | Fair name, venue & address |
-| Craft fair | Booth / table number |
-| Craft fair | Payment methods accepted |
-| FAQ: materials | Confirm PLA + TPU wording |
-| FAQ: lead time | Typical turnaround (X–Y days) |
-| FAQ: lead time | Last order date for Christmas delivery |
-| FAQ: shipping | Pickup location/arrangement |
-| FAQ: shipping | Shipping cost & carrier |
-| Contact | Set up `hello@genegenerated.com` (mailbox or forwarding) |
-| Images (comments) | Replace the three placeholder SVGs with real renders/photos |
+| `data/catalog.json` | Confirm prices: name $18, 3 for $45, photo $22, photo install +$3, US shipping $6. Then set `"pricesConfirmed": true` |
+| `data/catalog.json` | Shipping time text ("about 5 business days") |
+| `data/table-stock.json` | Your real list of pre-printed table names (sample names in there now) |
+| `data/gallery.json` | Real sample photos (it draws the ornaments until then) |
+| Home → Look closer | Three close-up photos: raised name, snowflakes/rim, the flexible back (1200×900) |
+| Home → Craft fair | Date & hours, fair name/venue/address, booth number, cash or not |
+| Home → FAQ | Confirm materials wording; turnaround days; last order date for Christmas; change/refund policy |
+| Home → Contact | Set up `hello@genegenerated.com` (mailbox or forwarding) |
+| Color schemes | Check the 6 schemes in `catalog.json` match filaments you actually have |
 
-### Swapping in product images
+### Editing common things
+- **Table stock:** edit `data/table-stock.json`. Each entry needs a unique `id`, the `name`, a `shape` (`bauble`/`star`) and a `scheme` (see `catalog.json`). Set `"available": false` when one sells out, then commit. Netlify redeploys in about a minute.
+- **Gallery photos:** put square JPG/WebP files (~800×800, under 300 KB) in `assets/gallery/` and set `"photo": "/assets/gallery/emma.jpg"`. For a customer's ornament, only add it if they said **Yes** at checkout, use their first name only, and set `"sample": false`.
+- **Close-up photos:** in `index.html`, find the three `TODO(Gene)` comments and replace each `<div class="ph">…</div>` with `<img src="/assets/img/closeup-name.jpg" alt="Close-up of the raised name Emma">`.
+- **Colors:** each scheme in `catalog.json` has `body` (the ornament), `ink` (name, year, rim, loop) and `accent` (snowflakes).
 
-Replace these files (or point the `<img src>` at new ones) and update the `alt` text:
+## Deploy (Netlify)
 
-| File | Used for | Suggested size |
-|---|---|---|
-| `assets/img/placeholder-hero.svg` | Hero | 1200×1200, square |
-| `assets/img/placeholder-name.svg` | Name ornament card | 800×800 (square; it's cropped square) |
-| `assets/img/placeholder-photo.svg` | Photo ornament card | 800×800 square |
+Checkout needs the Netlify function, so host on **Netlify**. GitHub Pages can't run it. Cloudflare Pages could, but would need the function rewritten.
 
-JPG/WebP photos are fine — keep each under ~300 KB. If you change the file extension, also update `src` in `index.html` and the `width`/`height` attributes to the image's real size.
+1. **Stripe:** create an account at stripe.com and finish business verification (needed before live payments). In **Developers → API keys**, copy the **test** secret key (`sk_test_…`).
+2. **Netlify:** app.netlify.com → **Add new site → Import an existing project → GitHub** → `GeneJohnston21/genegenerated`.
+   - Branch: `main` (merge `initial-site` first), or `initial-site` for a trial.
+   - Build command: *empty*. Publish directory: `.`. Netlify reads `netlify.toml` for the rest.
+3. **Site configuration → Environment variables → Add:** `STRIPE_SECRET_KEY` = your `sk_test_…` key. Mark it secret. Then **Deploys → Trigger deploy**.
+4. **Test it** on the `…netlify.app` address. Buy something with card `4242 4242 4242 4242`, any future date and any CVC. Check it appears in Stripe (test mode) with the design in Metadata. Try `/booth.html` on your phone too.
+5. **Go live:** confirm prices and set `"pricesConfirmed": true`. Swap the env var to your **live** key (`sk_live_…`) and redeploy. Do one real $ purchase and refund it in Stripe.
+6. **Contact form:** the contact form uses Netlify Forms. Messages appear under **Forms**. Turn on email alerts under **Site configuration → Notifications → Form submission notifications**.
+7. **Domain:** **Domain management → Add a domain** → `genegenerated.com` (Netlify adds `www` too). Set DNS as below, and HTTPS turns on automatically.
 
-## The order form
-
-There's no backend. The form uses **Netlify Forms** markup (`data-netlify="true"`, a honeypot field, and a hidden `form-name`). On Netlify, submissions show up under **Site → Forms**, and you can turn on email notifications under **Site configuration → Notifications → Form submission notifications**. Netlify's free tier includes 100 submissions/month.
-
-**Netlify Forms only work when the site is hosted on Netlify.** On GitHub Pages or Cloudflare Pages, switch to one of these:
-
-### Option A — Formspree (keeps the same form)
-1. Sign up at formspree.io, create a form, copy its endpoint (`https://formspree.io/f/xxxxxxx`).
-2. In `index.html`, change the `<form …>` tag to:
-   ```html
-   <form name="custom-order" method="POST" action="https://formspree.io/f/xxxxxxx" class="order-form">
-   ```
-   (remove `data-netlify` and `netlify-honeypot`; you can delete the hidden `form-name` input).
-3. Rename the honeypot input from `bot-field` to `_gotcha`.
-4. Add `<input type="hidden" name="_next" value="https://genegenerated.com/thanks.html">` inside the form to keep the thank-you page (paid plans), or let Formspree show its own confirmation page.
-
-### Option B — Google Form
-Build an equivalent Google Form, then replace the whole `<form>…</form>` block with a link button (`<a class="btn" href="https://forms.gle/…">Open the order form</a>`) or the form's embed `<iframe>`. Responses land in a Google Sheet.
-
-## Deploying
-
-Recommended: **Netlify**, because the order form works there with zero changes.
-
-### Netlify (recommended)
-1. Log in at app.netlify.com → **Add new site → Import an existing project** → GitHub → pick `GeneJohnston21/genegenerated`.
-2. Branch to deploy: `main` (merge `initial-site` first) — or pick `initial-site` to try it out.
-3. Build command: *leave empty*. Publish directory: `.` (the repo root).
-4. Deploy. You'll get a `something.netlify.app` URL — check the site and submit a test order.
-5. **Domain management → Add a domain** → `genegenerated.com`. Netlify will also add `www`.
-6. Set the DNS records below. Netlify issues the HTTPS certificate automatically once DNS resolves.
-
-### GitHub Pages
-1. Repo **Settings → Pages** → Source: *Deploy from a branch* → `main` / `/ (root)`.
-2. Custom domain: `genegenerated.com` (the `CNAME` file already says this). Tick **Enforce HTTPS** once the certificate is issued.
-3. Swap the form to Formspree or Google Forms (see above) — Netlify Forms won't work here.
-4. Set the DNS records below.
-
-### Cloudflare Pages
-1. dash.cloudflare.com → **Workers & Pages → Create → Pages → Connect to Git** → pick the repo.
-2. Framework preset: *None*. Build command: *empty*. Output directory: `/`.
-3. **Custom domains → Set up a custom domain** → `genegenerated.com`, then again for `www.genegenerated.com`.
-4. Swap the form to Formspree or Google Forms — Netlify Forms won't work here.
-5. DNS: see below (apex requires Cloudflare nameservers).
+### Local preview
+```sh
+python3 -m http.server 8000      # then open http://localhost:8000
+```
+Everything works except checkout. For checkout locally, use `npx netlify-cli dev` with `STRIPE_SECRET_KEY` set.
 
 ## DNS records for genegenerated.com
 
-Set these at the domain registrar (where genegenerated.com was bought). Delete any existing parking/"forwarding" A, AAAA or CNAME records for `@` and `www` first. Changes usually apply within an hour, sometimes up to 24–48 h.
+At your domain registrar, delete any existing parking/forwarding records for `@` and `www`, then add:
 
-Use **only the block for the host you chose.**
-
-### If hosting on Netlify
 | Type | Host/Name | Value |
 |---|---|---|
 | A | `@` | `75.2.60.5` |
 | CNAME | `www` | `YOUR-SITE-NAME.netlify.app` |
 
-(`YOUR-SITE-NAME` is shown in Netlify's site overview. Netlify's domain panel shows the exact records too — if they differ from the above, trust Netlify's panel. Alternative: use Netlify DNS by switching the registrar's nameservers to the four Netlify gives you, and skip the records above.)
+`YOUR-SITE-NAME` is shown on the Netlify site overview. If Netlify's domain panel shows different values, use Netlify's. Alternatively, use Netlify DNS by switching your nameservers to the four Netlify lists, and skip the table above.
 
-### If hosting on GitHub Pages
-| Type | Host/Name | Value |
-|---|---|---|
-| A | `@` | `185.199.108.153` |
-| A | `@` | `185.199.109.153` |
-| A | `@` | `185.199.110.153` |
-| A | `@` | `185.199.111.153` |
-| AAAA | `@` | `2606:50c0:8000::153` |
-| AAAA | `@` | `2606:50c0:8001::153` |
-| AAAA | `@` | `2606:50c0:8002::153` |
-| AAAA | `@` | `2606:50c0:8003::153` |
-| CNAME | `www` | `genejohnston21.github.io` |
+Check with `dig +short genegenerated.com` and `dig +short www.genegenerated.com`, then open both addresses over https.
 
-Recommended: verify the domain under GitHub **Settings (your profile) → Pages → Add a domain**, which gives you one extra TXT record to add — it prevents domain takeover.
-
-### If hosting on Cloudflare Pages
-Cloudflare Pages can only serve the apex (`genegenerated.com`) if Cloudflare runs the domain's DNS:
-1. Add `genegenerated.com` as a site in Cloudflare (free plan).
-2. At the registrar, change the **nameservers** to the two Cloudflare gives you.
-3. Adding the custom domains in the Pages project (step 3 above) then creates the records automatically: `CNAME @ → YOUR-PROJECT.pages.dev` (flattened) and `CNAME www → YOUR-PROJECT.pages.dev`.
-
-### Check it worked
-```sh
-dig +short genegenerated.com
-dig +short www.genegenerated.com
-```
-Then load https://genegenerated.com and https://www.genegenerated.com — both should show the site with a padlock.
+## The booth QR code
+`assets/qr/booth-qr-print.png` is 1800×1800 px and prints sharp at 6 inches. It points to `https://genegenerated.com/booth.html`, so it only works once the domain is live. Test it with your phone camera before printing.

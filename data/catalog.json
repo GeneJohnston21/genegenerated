@@ -1,0 +1,22 @@
+{
+  "_readme": "Prices are in cents. Checkout reads this file, so the site and the charge always match. Set pricesConfirmed to true once Gene has confirmed every number below; until then the site shows TODO badges and live (real-money) checkout is refused.",
+  "pricesConfirmed": false,
+  "currency": "usd",
+  "products": {
+    "name":  { "label": "Name ornament",  "unit": 1800, "bundle": { "size": 3, "price": 4500 } },
+    "photo": { "label": "Photo ornament", "unit": 2200 },
+    "table": { "label": "Ornament from the table", "unit": 1800, "bundle": { "size": 3, "price": 4500 } }
+  },
+  "photoInstall": { "label": "Gene installs your photo", "price": 300 },
+  "shipping": { "label": "Flat-rate US shipping", "price": 600, "countries": ["US"], "estimate": "Ships in about 5 business days" },
+  "shapes": { "bauble": "Round bauble", "star": "Star" },
+  "schemes": {
+    "classic": { "label": "Classic red", "body": "#e8384c", "ink": "#ffd27a", "accent": "#ffffff" },
+    "cobalt":  { "label": "Cobalt",      "body": "#3f6cf0", "ink": "#ffffff", "accent": "#ffc145" },
+    "emerald": { "label": "Emerald",     "body": "#18a566", "ink": "#fff6dc", "accent": "#ff4d5e" },
+    "gold":    { "label": "Gold",        "body": "#f2b233", "ink": "#7a1020", "accent": "#ffffff" },
+    "orange":  { "label": "Orange",      "body": "#ff8a3d", "ink": "#1b1030", "accent": "#ffffff" },
+    "snow":    { "label": "Snow white",  "body": "#f3f1ec", "ink": "#c81e3a", "accent": "#18a566" }
+  },
+  "limits": { "nameMax": 14, "captionMax": 22, "qtyMax": 20 }
+}

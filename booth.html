@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Booth Checkout · Gene Generated</title>
+  <meta name="description" content="At the Gene Generated booth: design an ornament or buy one from the table, and pay on your phone.">
+  <meta name="theme-color" content="#0a0f24">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/fonts/pacifico-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="modulepreload" href="/assets/vendor/three.module.min.js">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/assets/js/pricing.js" defer></script>
+  <script type="module" src="/assets/js/booth.js"></script>
+</head>
+<body class="booth-body">
+  <svg class="bulbs" viewBox="0 0 1000 46" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><path d="M0 6 Q 125 34 250 12 T 500 12 T 750 12 T 1000 6" fill="none" stroke="#3a4470" stroke-width="2.5"/><circle cx="50" cy="24" r="7" fill="#ff4d5e" style="filter:drop-shadow(0 0 6px #ff4d5e)"/><circle cx="140" cy="31" r="7" fill="#ffc145" style="filter:drop-shadow(0 0 6px #ffc145)"/><circle cx="230" cy="22" r="7" fill="#2fd58a" style="filter:drop-shadow(0 0 6px #2fd58a)"/><circle cx="320" cy="18" r="7" fill="#5b86ff" style="filter:drop-shadow(0 0 6px #5b86ff)"/><circle cx="410" cy="25" r="7" fill="#ff8a3d" style="filter:drop-shadow(0 0 6px #ff8a3d)"/><circle cx="500" cy="21" r="7" fill="#ff4d5e" style="filter:drop-shadow(0 0 6px #ff4d5e)"/><circle cx="590" cy="18" r="7" fill="#ffc145" style="filter:drop-shadow(0 0 6px #ffc145)"/><circle cx="680" cy="25" r="7" fill="#2fd58a" style="filter:drop-shadow(0 0 6px #2fd58a)"/><circle cx="770" cy="22" r="7" fill="#5b86ff" style="filter:drop-shadow(0 0 6px #5b86ff)"/><circle cx="860" cy="18" r="7" fill="#ff8a3d" style="filter:drop-shadow(0 0 6px #ff8a3d)"/><circle cx="950" cy="13" r="7" fill="#ff4d5e" style="filter:drop-shadow(0 0 6px #ff4d5e)"/></svg>
+  <main class="booth" id="main">
+    <div class="booth-top">
+      <a class="brand" href="/"><span class="brand-bulb" aria-hidden="true"></span>Gene Generated</a>
+      <span class="muted">Booth</span>
+    </div>
+    <p class="error" role="alert" data-canceled hidden>Checkout was canceled. Your cart is still here.</p>
+
+    <div class="booth-tabs" role="tablist" aria-label="How do you want to buy?">
+      <button type="button" role="tab" id="tab-table" aria-controls="panel-table" aria-selected="true">From the table</button>
+      <button type="button" role="tab" id="tab-design" aria-controls="panel-design" aria-selected="false" tabindex="-1">Design one</button>
+    </div>
+
+    <section id="panel-table" role="tabpanel" aria-labelledby="tab-table" style="display:grid;gap:12px">
+      <p class="muted">Tap the one you're holding. Pay, show Gene your receipt, and take it home today.</p>
+      <ul class="table-list" data-table-list></ul>
+      <p class="help" data-bundle-note></p>
+    </section>
+
+    <section id="panel-design" role="tabpanel" aria-labelledby="tab-design" hidden style="display:grid;gap:16px">
+      <div class="stage" id="stage" tabindex="0" role="img" aria-label="3D ornament preview">
+        <div class="orn2d" aria-hidden="true"></div>
+        <span class="spin-hint">Drag to spin it</span>
+      </div>
+      <div id="controls" style="display:grid;gap:16px"></div>
+      <p class="help">Designed ornaments are printed to order and shipped to you. Want a photo ornament? Use the <a href="/design.html?kind=photo">full designer</a>.</p>
+    </section>
+  </main>
+
+  <div class="paybar">
+    <div class="paybar-inner">
+      <span class="what" data-pay-what>Cart is empty<small>Pick an ornament to start</small></span>
+      <button type="button" class="btn btn-go" data-open-cart disabled>Review &amp; pay</button>
+    </div>
+  </div>
+
+  <dialog class="sheet" id="cart-sheet" aria-labelledby="cart-title">
+    <div style="display:flex;justify-content:flex-end;padding:12px 12px 0"><button type="button" class="btn btn-ghost btn-small" data-close>Close</button></div>
+    <section class="cart" id="cart"></section>
+  </dialog>
+  <div class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "_readme": "Gallery entries. With no photo, the site draws the ornament. Add a photo by putting a JPG/WebP in assets/gallery/ and setting photo to its path. Customer ornaments: only those who said yes to the gallery question at checkout, first name only.",
+  "items": [
+    { "name": "Liam",   "shape": "bauble", "scheme": "cobalt",  "photo": null, "sample": true },
+    { "name": "Nana",   "shape": "star",   "scheme": "emerald", "photo": null, "sample": true },
+    { "name": "Ava",    "shape": "bauble", "scheme": "gold",    "photo": null, "sample": true },
+    { "name": "Max",    "shape": "star",   "scheme": "orange",  "photo": null, "sample": true },
+    { "name": "Rosie",  "shape": "bauble", "scheme": "classic", "photo": null, "sample": true },
+    { "name": "Pop-Pop","shape": "bauble", "scheme": "snow",    "photo": null, "sample": true }
+  ]
+}

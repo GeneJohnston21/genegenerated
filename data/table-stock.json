@@ -1,0 +1,11 @@
+{
+  "_readme": "Pre-made ornaments on the booth table. Add or remove entries, then redeploy. id must be unique and never reused. Set available to false to hide one that sold out.",
+  "items": [
+    { "id": "emma-classic-bauble",  "name": "Emma",    "shape": "bauble", "scheme": "classic", "available": true },
+    { "id": "liam-cobalt-star",     "name": "Liam",    "shape": "star",   "scheme": "cobalt",  "available": true },
+    { "id": "olivia-emerald-bauble","name": "Olivia",  "shape": "bauble", "scheme": "emerald", "available": true },
+    { "id": "noah-gold-bauble",     "name": "Noah",    "shape": "bauble", "scheme": "gold",    "available": true },
+    { "id": "grandma-snow-star",    "name": "Grandma", "shape": "star",   "scheme": "snow",    "available": true },
+    { "id": "baby-first-orange",    "name": "Baby's First", "shape": "bauble", "scheme": "orange", "available": true }
+  ]
+}

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Design Your Ornament · Gene Generated</title>
+  <meta name="description" content="Type a name, pick a shape and colors, and spin your ornament in 3D before you order.">
+  <meta name="theme-color" content="#0a0f24">
+  <link rel="canonical" href="https://genegenerated.com/design.html">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/fonts/pacifico-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="modulepreload" href="/assets/vendor/three.module.min.js">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/assets/js/pricing.js" defer></script>
+  <script type="module" src="/assets/js/design-page.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <svg class="bulbs" viewBox="0 0 1000 46" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><path d="M0 6 Q 125 34 250 12 T 500 12 T 750 12 T 1000 6" fill="none" stroke="#3a4470" stroke-width="2.5"/><circle cx="50" cy="24" r="7" fill="#ff4d5e" style="filter:drop-shadow(0 0 6px #ff4d5e)"/><circle cx="140" cy="31" r="7" fill="#ffc145" style="filter:drop-shadow(0 0 6px #ffc145)"/><circle cx="230" cy="22" r="7" fill="#2fd58a" style="filter:drop-shadow(0 0 6px #2fd58a)"/><circle cx="320" cy="18" r="7" fill="#5b86ff" style="filter:drop-shadow(0 0 6px #5b86ff)"/><circle cx="410" cy="25" r="7" fill="#ff8a3d" style="filter:drop-shadow(0 0 6px #ff8a3d)"/><circle cx="500" cy="21" r="7" fill="#ff4d5e" style="filter:drop-shadow(0 0 6px #ff4d5e)"/><circle cx="590" cy="18" r="7" fill="#ffc145" style="filter:drop-shadow(0 0 6px #ffc145)"/><circle cx="680" cy="25" r="7" fill="#2fd58a" style="filter:drop-shadow(0 0 6px #2fd58a)"/><circle cx="770" cy="22" r="7" fill="#5b86ff" style="filter:drop-shadow(0 0 6px #5b86ff)"/><circle cx="860" cy="18" r="7" fill="#ff8a3d" style="filter:drop-shadow(0 0 6px #ff8a3d)"/><circle cx="950" cy="13" r="7" fill="#ff4d5e" style="filter:drop-shadow(0 0 6px #ff4d5e)"/></svg>
+    <div class="wrap nav">
+      <a class="brand" href="/"><span class="brand-bulb" aria-hidden="true"></span>Gene Generated</a>
+      <nav aria-label="Main">
+        <ul>
+          <li class="hide-sm"><a href="/#gallery">Gallery</a></li>
+          <li class="hide-sm"><a href="/#faq">FAQ</a></li>
+          <li><a class="cart-link" href="#cart">Cart<span class="cart-count" data-cart-count data-n="0">0</span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    <p class="error" role="alert" data-canceled hidden>Checkout was canceled. Your cart is still here.</p>
+    <div class="designer">
+      <div class="stage-col">
+        <div class="stage" id="stage" tabindex="0" role="img" aria-label="3D ornament preview">
+          <div class="orn2d" aria-hidden="true"></div>
+          <span class="spin-hint">Drag to spin it</span>
+        </div>
+      </div>
+      <div style="display:grid;gap:24px;min-width:0">
+        <section class="panel" aria-labelledby="design-title">
+          <div>
+            <h1 id="design-title">Design your ornament</h1>
+            <p class="muted">Everything you change shows up on the ornament right away. <span class="todo" data-price-todo>TODO: prices not final</span></p>
+          </div>
+          <div id="controls" style="display:grid;gap:20px"></div>
+        </section>
+        <section class="cart" id="cart" aria-labelledby="cart-title" tabindex="-1"></section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap"><span>© 2026 Gene Generated</span><a href="/">Back to the homepage</a></div>
+  </footer>
+</body>
+</html>
