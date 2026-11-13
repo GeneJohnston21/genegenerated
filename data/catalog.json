@@ -85,11 +85,12 @@
     "qtyMax": 20
   },
   "shop": {
-    "_readme": "Ready-made pieces sold on the homepage. Prices in cents. Gene set these on 13 Nov 2026 (shop.pricesConfirmed). Live checkout for a shop-only cart also needs shipping.confirmed. show:false hides a piece from the site; available:false shows it as sold out. id must never be reused.",
+    "_readme": "Ready-made pieces sold on the homepage. Prices in cents. Gene set these on 13 Nov 2026 (shop.pricesConfirmed). Live checkout for a shop-only cart also needs shipping.confirmed. show:false hides a piece from the site; available:false shows it as sold out. id must never be reused. Each item has a category id from categories. A category with a link (Custom ornaments) shows as a card that goes to that page instead of holding items.",
     "items": [
       {
         "id": "elf-sleigh-set",
         "name": "Elf & Sleigh Roll Holder Set",
+        "category": "bath",
         "blurb": "Two for the bathroom: an elf hauling the spare roll, and an elf pushing his sleigh with a post for another. Sold as a set of 2.",
         "price": 3000,
         "images": [
@@ -103,6 +104,7 @@
       {
         "id": "elf-roll-holder",
         "name": "Elf Roll Holder",
+        "category": "bath",
         "blurb": "A little elf hauling the spare roll. The bathroom's favorite holiday guest.",
         "price": 2500,
         "images": [
@@ -116,6 +118,7 @@
       {
         "id": "elf-sleigh",
         "name": "Elf & Sleigh",
+        "category": "bath",
         "blurb": "An elf pushing his sleigh, with a post for the spare roll.",
         "price": 3000,
         "images": [
@@ -128,6 +131,7 @@
       {
         "id": "reindeer-wine-holder",
         "name": "Reindeer Wine Holder",
+        "category": "wine",
         "blurb": "A resting reindeer in metallic silver that cradles a bottle. A hostess gift that stays out all season.",
         "price": 3000,
         "images": [
@@ -140,6 +144,7 @@
       {
         "id": "santa-bowl",
         "name": "Santa Belly Bowl",
+        "category": "bowls",
         "blurb": "Red suit, black belt, gold buckle and little boots. Made for candy or keys.",
         "price": 3000,
         "images": [
@@ -152,6 +157,7 @@
       {
         "id": "elf-legs-bowl",
         "name": "Elf Legs Bowl",
+        "category": "bowls",
         "blurb": "Shiny green with curly red elf shoes and a white fur rim.",
         "price": 3500,
         "images": [
@@ -164,6 +170,7 @@
       {
         "id": "merry-tree-sign",
         "name": "Merry Christmas Tree Sign",
+        "category": "decor",
         "blurb": "Flowing script shaped like a tree, in red and green, topped with a star.",
         "price": 1500,
         "images": [
@@ -175,6 +182,7 @@
       {
         "id": "holiday-hand-wine-holder",
         "name": "Holiday Hand Wine Holder",
+        "category": "wine",
         "blurb": "A green hand with a fur cuff that holds a bottle at a tilt.",
         "price": 4500,
         "images": [
@@ -188,6 +196,31 @@
         "_note": "Gene holds a commercial licence for the model from its maker (13 Nov 2026). Never name or tag it after any film or book character."
       }
     ],
-    "pricesConfirmed": true
+    "pricesConfirmed": true,
+    "categories": [
+      {
+        "id": "wine",
+        "label": "Wine holders"
+      },
+      {
+        "id": "bowls",
+        "label": "Candy bowls"
+      },
+      {
+        "id": "bath",
+        "label": "Bathroom"
+      },
+      {
+        "id": "decor",
+        "label": "Signs & decor"
+      },
+      {
+        "id": "ornaments",
+        "label": "Custom ornaments",
+        "link": "/design.html",
+        "image": null,
+        "blurb": "Design a name or photo ornament and spin it in 3D before you buy."
+      }
+    ]
   }
 }

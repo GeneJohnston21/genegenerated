@@ -25,18 +25,21 @@ async function main() {
 
   document.querySelectorAll("[data-draw]").forEach((el) => { el.innerHTML = ornamentSVG(JSON.parse(el.dataset.draw), S); });
 
-  // Ready-made pieces, from catalog.shop
+  // Ready-made pieces, from catalog.shop, filtered by category chips (?cat=... keeps the choice shareable)
   const grid = document.querySelector("[data-shop]");
+  const chips = document.querySelector("[data-shop-cats]");
   if (grid && catalog.shop) {
     const esc = (t) => String(t).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
     const items = catalog.shop.items.filter((x) => x.show);
-    grid.innerHTML = items.map((x) => `
+    const cats = (catalog.shop.categories || []).filter((c) => c.link || items.some((x) => x.category === c.id));
+    const card = (x) => `
       <article class="shop-card${x.images.length > 1 ? " has-alt" : ""}">
         <div class="shop-img">
           <img src="${x.images[0]}" alt="${esc(x.name)}" loading="lazy" width="1000" height="1000">
           ${x.images[1] ? `<img class="alt" src="${x.images[1]}" alt="" loading="lazy" width="1000" height="1000">` : ""}
         </div>
         <div class="shop-body">
+          <p class="shop-cat">${esc((cats.find((c) => c.id === x.category) || {}).label || "")}</p>
           <h3>${esc(x.name)}</h3>
           <p>${esc(x.blurb)}</p>
           <div class="shop-buy">
@@ -46,7 +49,45 @@ async function main() {
               : `<span class="muted">Sold out</span>`}
           </div>
         </div>
-      </article>`).join("");
+      </article>`;
+    const linkCard = (c) => `
+      <a class="shop-card shop-link" href="${esc(c.link)}">
+        <div class="shop-img orn-img">${ornamentSVG({ kind: "name", text: "Emma", shape: "bauble", scheme: "classic" }, S)}</div>
+        <div class="shop-body">
+          <p class="shop-cat">${esc(c.label)}</p>
+          <h3>Design your own</h3>
+          <p>${esc(c.blurb || "")}</p>
+          <div class="shop-buy"><span class="price">from ${money(Math.min(name.unit, photo.unit))}</span><span class="btn btn-small" aria-hidden="true">Start designing</span></div>
+        </div>
+      </a>`;
+
+    const valid = (id) => id === "all" || cats.some((c) => c.id === id);
+    let current = new URLSearchParams(location.search).get("cat");
+    if (!valid(current)) current = "all";
+
+    const render = () => {
+      if (chips) {
+        const n = (id) => items.filter((x) => x.category === id).length;
+        chips.innerHTML = [`<button type="button" class="chip" data-cat="all" aria-pressed="${current === "all"}">All <span>${items.length}</span></button>`]
+          .concat(cats.map((c) => `<button type="button" class="chip" data-cat="${esc(c.id)}" aria-pressed="${current === c.id}">${esc(c.label)}${c.link ? "" : ` <span>${n(c.id)}</span>`}</button>`))
+          .join("");
+      }
+      const show = current === "all" ? items : items.filter((x) => x.category === current);
+      const links = cats.filter((c) => c.link && (current === "all" || current === c.id));
+      grid.innerHTML = show.map(card).join("") + links.map(linkCard).join("");
+    };
+    render();
+
+    chips?.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-cat]"); if (!b) return;
+      current = b.dataset.cat;
+      const url = new URL(location.href);
+      if (current === "all") url.searchParams.delete("cat"); else url.searchParams.set("cat", current);
+      history.replaceState(null, "", url);
+      render();
+      chips.querySelector(`[data-cat="${current}"]`)?.focus();
+    });
+
     const status = document.querySelector("[data-shop-status]");
     grid.addEventListener("click", (e) => {
       const b = e.target.closest("[data-add]"); if (!b) return;
