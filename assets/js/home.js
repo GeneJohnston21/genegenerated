@@ -1,4 +1,4 @@
-import { loadData, cart, todoBadges } from "./shop.js";
+import { loadData, cart, todoBadges, addToCart } from "./shop.js";
 import { ornamentSVG } from "./orn2d.js";
 
 const money = (c) => "$" + (c / 100).toFixed(c % 100 ? 2 : 0);
@@ -24,6 +24,39 @@ async function main() {
   document.querySelectorAll("[data-ship-price]").forEach((el) => (el.textContent = money(catalog.shipping.price)));
 
   document.querySelectorAll("[data-draw]").forEach((el) => { el.innerHTML = ornamentSVG(JSON.parse(el.dataset.draw), S); });
+
+  // Ready-made pieces, from catalog.shop
+  const grid = document.querySelector("[data-shop]");
+  if (grid && catalog.shop) {
+    const esc = (t) => String(t).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+    const items = catalog.shop.items.filter((x) => x.show);
+    grid.innerHTML = items.map((x) => `
+      <article class="shop-card${x.images.length > 1 ? " has-alt" : ""}">
+        <div class="shop-img">
+          <img src="${x.images[0]}" alt="${esc(x.name)}" loading="lazy" width="1000" height="1000">
+          ${x.images[1] ? `<img class="alt" src="${x.images[1]}" alt="" loading="lazy" width="1000" height="1000">` : ""}
+        </div>
+        <div class="shop-body">
+          <h3>${esc(x.name)}</h3>
+          <p>${esc(x.blurb)}</p>
+          <div class="shop-buy">
+            <span class="price">${money(x.price)}</span>
+            ${x.available
+              ? `<button type="button" class="btn btn-small" data-add="${esc(x.id)}">Add to cart</button>`
+              : `<span class="muted">Sold out</span>`}
+          </div>
+        </div>
+      </article>`).join("");
+    const status = document.querySelector("[data-shop-status]");
+    grid.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-add]"); if (!b) return;
+      addToCart({ kind: "shop", id: b.dataset.add, qty: 1 });
+      const item = items.find((x) => x.id === b.dataset.add);
+      b.textContent = "Added ✓";
+      setTimeout(() => (b.textContent = "Add to cart"), 1600);
+      if (status) status.innerHTML = `${esc(item.name)} is in your cart. <a href="/design.html#cart">View cart</a>`;
+    });
+  }
 
   const shelf = document.querySelector("[data-gallery]");
   if (shelf) {

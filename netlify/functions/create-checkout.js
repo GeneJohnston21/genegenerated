@@ -84,7 +84,7 @@ exports.handler = async (event) => {
 
   // One metadata entry per item, so every order shows its exact design in the Stripe dashboard.
   priced.items.slice(0, 40).forEach((it, i) => {
-    const text = it.kind === "table" ? `TABLE ${it.id}` : `${it.kind.toUpperCase()} "${it.text}" ${it.year} ${it.shape} ${it.scheme}${it.kind === "photo" ? (it.install ? " INSTALL-PHOTO" : " customer-photo") : ""}`;
+    const text = it.kind === "shop" ? `SHOP ${it.id}` : it.kind === "table" ? `TABLE ${it.id}` : `${it.kind.toUpperCase()} "${it.text}" ${it.year} ${it.shape} ${it.scheme}${it.kind === "photo" ? (it.install ? " INSTALL-PHOTO" : " customer-photo") : ""}`;
     params.metadata[`item_${i + 1}`] = `${it.qty}x ${text}`.slice(0, 500);
   });
 

@@ -46,6 +46,13 @@
       var qty = cleanQty(raw.qty, L.qtyMax);
       if (qty === null) { errors.push("Item " + n + ": quantity must be 1–" + L.qtyMax + "."); return; }
 
+      if (raw.kind === "shop") {
+        var sp = (catalog.shop && catalog.shop.items || []).find(function (x) { return x.id === raw.id; });
+        if (!sp || !sp.show || !sp.available) { errors.push("Item " + n + ": that piece is no longer available."); return; }
+        items.push({ kind: "shop", id: sp.id, name: sp.name, qty: qty });
+        return;
+      }
+
       if (raw.kind === "table") {
         var s = stockById[raw.id];
         if (!s || !s.available) { errors.push("Item " + n + ": that table ornament is no longer available."); return; }
@@ -72,11 +79,16 @@
     var lines = [];
     var bundle = catalog.products.name.bundle;
     var eligibleTotal = 0;
-    items.forEach(function (it) { if (it.kind !== "photo") eligibleTotal += it.qty; });
+    items.forEach(function (it) { if (it.kind === "name" || it.kind === "table") eligibleTotal += it.qty; });
     var bundledLeft = bundle ? Math.floor(eligibleTotal / bundle.size) * bundle.size : 0;
     var bundleUnit = bundle ? Math.round(bundle.price / bundle.size) : 0;
 
     items.forEach(function (it) {
+      if (it.kind === "shop") {
+        var sp = catalog.shop.items.find(function (x) { return x.id === it.id; });
+        lines.push({ title: sp.name, description: "Ready-made · printed by Gene", unit: sp.price, qty: it.qty });
+        return;
+      }
       var p = catalog.products[it.kind];
       var title = it.kind === "table"
         ? p.label + ": “" + it.name + "”"

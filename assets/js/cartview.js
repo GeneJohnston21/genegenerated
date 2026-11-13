@@ -21,7 +21,7 @@ export function mountCart(root, { catalog, stock }, source) {
     h += `<ul class="cart-items">` + items.map((it) => {
       const lab = itemLabel(it, catalog, stock);
       const look = it.kind === "table" ? stock.items.find((s) => s.id === it.id) || {} : it;
-      const thumb = ornamentSVG({ kind: it.kind === "photo" ? "photo" : "name", text: it.kind === "table" ? look.name : it.text, shape: look.shape, scheme: look.scheme, year: it.year || "2026" }, catalog.schemes);
+      const thumb = it.kind === "shop" ? `<img src="${esc(lab.img || "")}" alt="" width="64" height="64">` : ornamentSVG({ kind: it.kind === "photo" ? "photo" : "name", text: it.kind === "table" ? look.name : it.text, shape: look.shape, scheme: look.scheme, year: it.year || "2026" }, catalog.schemes);
       return `<li><span class="thumb" aria-hidden="true">${thumb}</span><div><div class="t">${esc(lab.title)}</div><div class="s">${esc(lab.sub)}</div></div>
         <div class="ctrl"><span class="qty" role="group" aria-label="Quantity"><button type="button" data-dec="${it.key}" aria-label="One fewer">−</button><output aria-live="polite">${it.qty}</output><button type="button" data-inc="${it.key}" aria-label="One more">+</button></span><button type="button" class="link-btn" data-rm="${it.key}">Remove</button></div></li>`;
     }).join("") + `</ul>`;
@@ -32,7 +32,7 @@ export function mountCart(root, { catalog, stock }, source) {
       h += `<p class="hint">Add ${priced.toNextBundle} more name ornament${priced.toNextBundle > 1 ? "s" : ""} to get ${bundle.size} for ${money(bundle.price)}.</p>`;
     }
     const ship = priced.needsShipping ? catalog.shipping.price : 0;
-    h += `<div class="sum"><div><span>Ornaments</span><span>${money(priced.subtotal)}</span></div>`;
+    h += `<div class="sum"><div><span>Items</span><span>${money(priced.subtotal)}</span></div>`;
     h += priced.needsShipping
       ? `<div><span>${esc(catalog.shipping.label)}</span><span>${money(ship)}</span></div>`
       : `<div><span>Shipping</span><span>None, it's in your hands</span></div>`;

@@ -277,3 +277,17 @@ dialog.sheet .cart { border-radius: 0; border: 0; padding-bottom: calc(24px + en
 .simple .wrap { display: grid; gap: 16px; justify-items: center; }
 .receipt { width: 100%; max-width: 460px; text-align: left; }
 .big-check { width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; background: var(--emerald); color: var(--on-emerald); font: 700 2.6rem var(--f-display); box-shadow: 0 0 40px #2fd58a66; }
+
+/* Ready-made shop */
+.shop-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); margin-top: 28px; }
+.shop-card { display: flex; flex-direction: column; background: var(--night-2); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.shop-img { position: relative; aspect-ratio: 1; background: #f7f5f2; }
+.shop-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .35s; }
+.shop-img img.alt { opacity: 0; }
+@media (hover: hover) { .shop-card.has-alt:hover .shop-img img.alt { opacity: 1; } }
+.shop-body { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px 18px; flex: 1; }
+.shop-body h3 { font-size: 1.2rem; }
+.shop-body p { color: var(--dim); font-size: .95rem; margin: 0; flex: 1; }
+.shop-buy { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; }
+.shop-buy .price { font: 700 1.25rem var(--f-display); color: var(--gold); }
+.cart-items .thumb img { width: 52px; height: 52px; display: block; object-fit: cover; border-radius: 10px; }

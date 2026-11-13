@@ -24,8 +24,8 @@ export function cart() { return memory ?? (memory = readCart()); }
 
 export function addToCart(item) {
   const c = cart().slice();
-  if (item.kind === "table") {
-    const hit = c.find((x) => x.kind === "table" && x.id === item.id);
+  if (item.kind === "table" || item.kind === "shop") {
+    const hit = c.find((x) => x.kind === item.kind && x.id === item.id);
     if (hit) { hit.qty = Math.min(hit.qty + 1, 20); writeCart(c); return; }
   }
   c.push({ ...item, key: Math.random().toString(36).slice(2, 9) });
@@ -53,6 +53,10 @@ export async function checkout(source) {
 }
 
 export function itemLabel(it, catalog, stock) {
+  if (it.kind === "shop") {
+    const s = (catalog.shop?.items || []).find((x) => x.id === it.id);
+    return { title: s ? s.name : "?", sub: "Ready-made · ships in a few days", img: s?.images?.[0] };
+  }
   if (it.kind === "table") {
     const s = stock.items.find((x) => x.id === it.id);
     return { title: `“${s ? s.name : "?"}” from the table`, sub: s ? `${catalog.shapes[s.shape]} · ${catalog.schemes[s.scheme].label} · take it home today` : "" };
