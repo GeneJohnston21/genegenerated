@@ -161,10 +161,15 @@
         "name": "Holiday Hand Wine Holder",
         "blurb": "A green hand with a fur cuff that holds a bottle at a tilt.",
         "price": 3500,
-        "images": [],
-        "show": false,
+        "images": [
+          "/assets/img/shop/holiday-hand-wine-holder-1.jpg",
+          "/assets/img/shop/holiday-hand-wine-holder-2.jpg",
+          "/assets/img/shop/holiday-hand-wine-holder-3.jpg",
+          "/assets/img/shop/holiday-hand-wine-holder-4.jpg"
+        ],
+        "show": true,
         "available": true,
-        "_note": "Hidden pending Gene's call: the design reads as a well-known trademarked character. Photos are in Gene's Drive (GeneErated), not committed."
+        "_note": "Gene holds a commercial licence for the model from its maker (13 Nov 2026). Never name or tag it after any film or book character."
       }
     ]
   }
