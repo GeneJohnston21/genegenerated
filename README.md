@@ -109,3 +109,11 @@ Check with `dig +short genegenerated.com` and `dig +short www.genegenerated.com`
    `show`, `available`.
 3. Departments and subcategories appear on the site on their own once something visible is in
    them. To add a new subcategory, add it under its department in `shop.departments`.
+
+## Forms (contact and custom quotes)
+
+The contact form and the custom-quote form on `/custom.html` are Netlify Forms. Netlify only
+registers forms when it builds the site, so after turning on **Forms → form detection** (or adding
+a new form), the next deploy is what makes them work. Submissions land in Netlify under **Forms**;
+set **Forms → Form notifications → Email** to get them in your inbox. Uploaded photos are kept with
+the submission.
