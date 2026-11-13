@@ -39,7 +39,7 @@
         <h1>Made from <em>your</em> photo.</h1>
         <p class="lede">Gene turns photos into 3D prints: a faux-marble bust of you, someone you love, or the dog who runs the house. Or design your own ornament online in a couple of minutes.</p>
         <div class="hero-actions">
-          <a class="btn" href="#quote">Get a bust quote</a>
+          <a class="btn" href="#quote">Order a bust · $75</a>
           <a class="btn btn-ghost" href="/design.html">Design an ornament</a>
         </div>
       </div>
@@ -50,7 +50,7 @@
         <div class="section-head">
           <p class="eyebrow">Custom busts</p>
           <h2 id="busts-title">Your photo, as a bust</h2>
-          <p>Gene builds a 3D model from your photo, sends you a preview to approve, then prints it.</p>
+          <p>Gene builds a 3D model from your photo, sends you a preview to approve, then prints it. A 6-inch faux-marble bust is $75.</p>
         </div>
         <div class="bust-grid">
           <figure class="bust-pair">
@@ -68,8 +68,8 @@
             </ol>
             <ul class="facts">
               <li><b>Finish:</b> faux marble. Full color is coming soon.</li>
-              <li><b>Sizes:</b> about 4, 6 or 8 inches tall. <span class="todo">TODO: Gene to confirm sizes</span></li>
-              <li><b>Price:</b> by quote. <span class="todo">TODO: Gene to set "from" prices</span></li>
+              <li><b>Size:</b> about 6 inches tall. Other sizes by quote.</li>
+              <li><b>Price:</b> $75 for a 6-inch bust, including the 3D model and your preview.</li>
               <li><b>Time:</b> about a week after you approve the preview. <span class="todo">TODO: confirm</span></li>
             </ul>
           </div>
@@ -93,7 +93,7 @@
         <div class="section-head">
           <p class="eyebrow">Get a quote</p>
           <h2 id="quote-title">Tell Gene what you'd like</h2>
-          <p>No payment now. Gene replies with a preview and a price.</p>
+          <p>No payment now. Gene replies with a preview to approve; you pay once you're happy with it.</p>
         </div>
         <form class="contact-form" name="custom-quote" method="POST" action="/thanks.html?from=quote" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="bot-field" data-quote-form>
           <input type="hidden" name="form-name" value="custom-quote">
@@ -108,7 +108,7 @@
           </div>
           <div class="row2" data-bust-only>
             <div class="field"><label for="q-size">Size</label>
-              <select id="q-size" name="size"><option>About 4 in</option><option selected>About 6 in</option><option>About 8 in</option><option>Not sure</option></select></div>
+              <select id="q-size" name="size"><option selected>About 6 in ($75)</option><option>Smaller (quote)</option><option>Larger (quote)</option><option>Not sure</option></select></div>
             <div class="field"><label for="q-finish">Finish</label>
               <select id="q-finish" name="finish"><option>Faux marble</option><option>Full color (coming soon)</option><option>Not sure</option></select></div>
           </div>
