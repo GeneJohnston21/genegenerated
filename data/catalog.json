@@ -34,7 +34,8 @@
     "countries": [
       "US"
     ],
-    "estimate": "Ships in about 5 business days"
+    "estimate": "Ships in about 5 business days",
+    "confirmed": false
   },
   "shapes": {
     "bauble": "Round bauble",
@@ -84,8 +85,21 @@
     "qtyMax": 20
   },
   "shop": {
-    "_readme": "Ready-made pieces sold on the homepage. Prices in cents and placeholders until Gene confirms (pricesConfirmed covers these too). show:false hides a piece from the site; available:false shows it as sold out. id must never be reused.",
+    "_readme": "Ready-made pieces sold on the homepage. Prices in cents. Gene set these on 13 Nov 2026 (shop.pricesConfirmed). Live checkout for a shop-only cart also needs shipping.confirmed. show:false hides a piece from the site; available:false shows it as sold out. id must never be reused.",
     "items": [
+      {
+        "id": "elf-sleigh-set",
+        "name": "Elf & Sleigh Roll Holder Set",
+        "blurb": "Two for the bathroom: an elf hauling the spare roll, and an elf pushing his sleigh with a post for another. Sold as a set of 2.",
+        "price": 3000,
+        "images": [
+          "/assets/img/shop/elf-roll-holder-1.jpg",
+          "/assets/img/shop/elf-roll-holder-2.jpg",
+          "/assets/img/shop/elf-sleigh-1.jpg"
+        ],
+        "show": true,
+        "available": true
+      },
       {
         "id": "elf-roll-holder",
         "name": "Elf Roll Holder",
@@ -95,8 +109,9 @@
           "/assets/img/shop/elf-roll-holder-1.jpg",
           "/assets/img/shop/elf-roll-holder-2.jpg"
         ],
-        "show": true,
-        "available": true
+        "show": false,
+        "available": true,
+        "_note": "Replaced by elf-sleigh-set (13 Nov 2026). Keep the id retired."
       },
       {
         "id": "elf-sleigh",
@@ -106,14 +121,15 @@
         "images": [
           "/assets/img/shop/elf-sleigh-1.jpg"
         ],
-        "show": true,
-        "available": true
+        "show": false,
+        "available": true,
+        "_note": "Replaced by elf-sleigh-set (13 Nov 2026). Keep the id retired."
       },
       {
         "id": "reindeer-wine-holder",
         "name": "Reindeer Wine Holder",
         "blurb": "A resting reindeer in metallic silver that cradles a bottle. A hostess gift that stays out all season.",
-        "price": 3500,
+        "price": 3000,
         "images": [
           "/assets/img/shop/reindeer-wine-holder-1.jpg",
           "/assets/img/shop/reindeer-wine-holder-2.jpg"
@@ -125,7 +141,7 @@
         "id": "santa-bowl",
         "name": "Santa Belly Bowl",
         "blurb": "Red suit, black belt, gold buckle and little boots. Made for candy or keys.",
-        "price": 2200,
+        "price": 3000,
         "images": [
           "/assets/img/shop/santa-bowl-1.jpg",
           "/assets/img/shop/santa-bowl-2.jpg"
@@ -137,7 +153,7 @@
         "id": "elf-legs-bowl",
         "name": "Elf Legs Bowl",
         "blurb": "Shiny green with curly red elf shoes and a white fur rim.",
-        "price": 2200,
+        "price": 3500,
         "images": [
           "/assets/img/shop/elf-legs-bowl-1.jpg",
           "/assets/img/shop/elf-legs-bowl-2.jpg"
@@ -160,7 +176,7 @@
         "id": "holiday-hand-wine-holder",
         "name": "Holiday Hand Wine Holder",
         "blurb": "A green hand with a fur cuff that holds a bottle at a tilt.",
-        "price": 3500,
+        "price": 4500,
         "images": [
           "/assets/img/shop/holiday-hand-wine-holder-1.jpg",
           "/assets/img/shop/holiday-hand-wine-holder-2.jpg",
@@ -171,6 +187,7 @@
         "available": true,
         "_note": "Gene holds a commercial licence for the model from its maker (13 Nov 2026). Never name or tag it after any film or book character."
       }
-    ]
+    ],
+    "pricesConfirmed": true
   }
 }

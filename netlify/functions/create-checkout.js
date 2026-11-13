@@ -43,9 +43,6 @@ exports.handler = async (event) => {
     console.error(`STRIPE_SECRET_KEY is not a Stripe secret key. It starts with "${key.slice(0, 8)}" but should start with sk_test_ or sk_live_ (publishable pk_ keys do not work).`);
     return json(503, { error: "Online checkout isn't set up correctly yet. Please order at the table or use the contact form." });
   }
-  if (/^(sk|rk)_live_/.test(key) && !catalog.pricesConfirmed) {
-    return json(503, { error: "Checkout is paused while prices are being finalized. Please order at the table." });
-  }
 
   let body;
   try { body = JSON.parse(event.body || "{}"); } catch { return json(400, { error: "Bad request." }); }
@@ -53,6 +50,15 @@ exports.handler = async (event) => {
 
   const priced = priceCart(body.cart, catalog, stock);
   if (!priced.ok) return json(400, { error: priced.errors[0] || "Please check your cart.", errors: priced.errors });
+
+  // Real-money checkout only for prices Gene has confirmed: everything (pricesConfirmed), or a
+  // cart of ready-made pieces only (shop.pricesConfirmed) with the shipping rate confirmed too.
+  const shopOnly = priced.items.every((it) => it.kind === "shop");
+  const liveOk = catalog.pricesConfirmed ||
+    (shopOnly && catalog.shop && catalog.shop.pricesConfirmed && (!priced.needsShipping || catalog.shipping.confirmed));
+  if (/^(sk|rk)_live_/.test(key) && !liveOk) {
+    return json(503, { error: "Checkout is paused while prices are being finalized. Please order at the table." });
+  }
 
   const origin = siteOrigin(event);
   const back = source === "booth" ? "/booth.html" : "/design.html";
