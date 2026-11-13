@@ -37,6 +37,10 @@
     "estimate": "Ships in about 5 business days",
     "confirmed": false
   },
+  "pickup": {
+    "label": "Local pickup",
+    "note": "Free local pickup: Gene will text you to set a time, or grab it at the craft fair."
+  },
   "shapes": {
     "bauble": "Round bauble",
     "star": "Star"
@@ -85,7 +89,7 @@
     "qtyMax": 20
   },
   "shop": {
-    "_readme": "Ready-made pieces sold on the homepage. Prices in cents; Gene set the current ones on 13 Nov 2026 (shop.pricesConfirmed). Live checkout for a shop-only cart also needs shipping.confirmed. Departments hold subcategories; each item's category is a subcategory id and type is a short label (Wine holder, Candy bowl). A department or subcategory only appears on the site once something visible is in it, so it is safe to list ones not stocked yet. A department with a link (Custom ornaments) shows as a card into that page. show:false hides a piece; available:false shows it sold out. ids are never reused.",
+    "_readme": "Ready-made pieces sold on the homepage. Prices in cents; Gene set the current ones on 13 Nov 2026 (shop.pricesConfirmed). Live checkout for a shop-only cart also needs shipping.confirmed. Departments hold subcategories; each item's category is a subcategory id and type is a short label (Wine holder, Candy bowl). A department or subcategory only appears on the site once something visible is in it, so it is safe to list ones not stocked yet. A department with offers (Custom work) shows each offer as a card linking to its page; price_text overrides the price line (null = ornament 'from' price). show:false hides a piece; available:false shows it sold out. ids are never reused.",
     "items": [
       {
         "id": "elf-sleigh-set",
@@ -292,9 +296,27 @@
       },
       {
         "id": "custom",
-        "label": "Custom ornaments",
-        "link": "/design.html",
-        "blurb": "Design a name or photo ornament and spin it in 3D before you buy."
+        "label": "Custom work",
+        "offers": [
+          {
+            "id": "busts",
+            "label": "Custom busts",
+            "link": "/custom.html#busts",
+            "title": "Your photo, as a bust",
+            "blurb": "Send a photo and Gene models and prints a bust of you, someone you love, or your pet.",
+            "price_text": "Quote",
+            "image": null
+          },
+          {
+            "id": "ornaments",
+            "label": "Custom ornaments",
+            "link": "/design.html",
+            "title": "Design your own ornament",
+            "blurb": "Design a name or photo ornament and spin it in 3D before you buy.",
+            "price_text": null,
+            "image": null
+          }
+        ]
       }
     ]
   }

@@ -1,4 +1,5 @@
 [build]
+  command = "node tools/build-pages.mjs"
   publish = "."
   functions = "netlify/functions"
 
@@ -30,4 +31,9 @@
 [[redirects]]
   from = "/design"
   to = "/design.html"
+  status = 200
+
+[[redirects]]
+  from = "/custom"
+  to = "/custom.html"
   status = 200

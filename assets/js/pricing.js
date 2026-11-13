@@ -27,8 +27,10 @@
     return shape + " · " + scheme + " · " + item.year;
   }
 
-  // Returns { ok, errors[], items[] (cleaned), lines[], subtotal, needsShipping, unitsForBundle }
-  function priceCart(rawCart, catalog, stock) {
+  // Returns { ok, errors[], items[] (cleaned), lines[], subtotal, needsShipping, canShip, unitsForBundle }
+  // opts.fulfillment: "ship" (default) or "pickup" (free local pickup, no shipping charged).
+  function priceCart(rawCart, catalog, stock, opts) {
+    var pickup = !!(opts && opts.fulfillment === "pickup");
     var errors = [];
     var items = [];
     var L = catalog.limits;
@@ -107,11 +109,13 @@
     });
 
     var subtotal = lines.reduce(function (a, l) { return a + l.unit * l.qty; }, 0);
-    var needsShipping = items.some(function (it) { return it.kind !== "table"; });
+    // Table ornaments go home with the customer; everything else ships unless they pick up.
+    var canShip = items.some(function (it) { return it.kind !== "table"; });
+    var needsShipping = canShip && !pickup;
     // How many more name ornaments until the next bundle kicks in (for a friendly hint).
     var toNextBundle = bundle ? (bundle.size - (eligibleTotal % bundle.size)) % bundle.size : 0;
 
-    return { ok: errors.length === 0 && items.length > 0, errors: errors, items: items, lines: lines, subtotal: subtotal, needsShipping: needsShipping, eligibleTotal: eligibleTotal, toNextBundle: toNextBundle };
+    return { ok: errors.length === 0 && items.length > 0, errors: errors, items: items, lines: lines, subtotal: subtotal, needsShipping: needsShipping, canShip: canShip, pickup: pickup && canShip, eligibleTotal: eligibleTotal, toNextBundle: toNextBundle };
   }
 
   function money(cents) {

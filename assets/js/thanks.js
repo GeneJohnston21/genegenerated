@@ -8,6 +8,11 @@ async function main() {
   const title = document.querySelector("[data-title]");
   const lede = document.querySelector("[data-lede]");
 
+  if (from === "quote") {
+    title.textContent = "Request sent!";
+    lede.textContent = "Thanks! Gene will look at your photos and reply by email with a preview and a price, usually within a couple of days.";
+    return;
+  }
   if (from === "contact") {
     title.textContent = "Message sent!";
     lede.textContent = "Thanks for getting in touch. Gene will reply by email.";
@@ -27,7 +32,13 @@ async function main() {
 
   const parts = [];
   if (table.length) parts.push("Show this screen at the table and take your ornament home.");
-  if (made.length) parts.push("Your custom ornament is going into the print queue. Stripe has emailed your receipt, and you'll get another email when it ships.");
+  const custom = made.filter((i) => i.kind !== "shop");
+  const ready = made.filter((i) => i.kind === "shop");
+  if (custom.length) parts.push("Your custom ornament is going into the print queue.");
+  if (ready.length) parts.push("Your order is ready-made, so it goes out quickly.");
+  if (made.length) parts.push(last && last.fulfillment === "pickup"
+    ? "You chose local pickup: Gene will text you to set a time. Stripe has emailed your receipt."
+    : "Stripe has emailed your receipt, and you'll get another email when it ships.");
   lede.textContent = parts.join(" ") || "Stripe has emailed your receipt.";
   if (from === "booth") document.querySelector("[data-back]").setAttribute("href", "/booth.html");
 

@@ -1,5 +1,5 @@
 // Renders the cart (items, quantities, totals, deal hint) into a container.
-import { cart, setQty, removeItem, itemLabel, checkout } from "./shop.js";
+import { cart, setQty, removeItem, itemLabel, checkout, fulfillment, setFulfillment } from "./shop.js";
 import { ornamentSVG } from "./orn2d.js";
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -10,7 +10,8 @@ export function mountCart(root, { catalog, stock }, source) {
 
   function render() {
     const items = cart();
-    const priced = P.priceCart(items, catalog, stock);
+    const how = fulfillment();
+    const priced = P.priceCart(items, catalog, stock, { fulfillment: how });
     const count = items.reduce((a, x) => a + x.qty, 0);
     let h = `<h2 id="cart-title" tabindex="-1">Your cart${count ? ` <span class="muted">(${count})</span>` : ""}</h2>`;
     if (!items.length) {
@@ -32,12 +33,18 @@ export function mountCart(root, { catalog, stock }, source) {
       h += `<p class="hint">Add ${priced.toNextBundle} more name ornament${priced.toNextBundle > 1 ? "s" : ""} to get ${bundle.size} for ${money(bundle.price)}.</p>`;
     }
     const ship = priced.needsShipping ? catalog.shipping.price : 0;
+    if (priced.canShip) {
+      const pu = catalog.pickup || {};
+      h += `<fieldset class="fulfil"><legend>How do you want it?</legend>
+        <label><input type="radio" name="fulfil-${source}" value="ship" ${how === "ship" ? "checked" : ""}> <span><b>Ship it</b> · ${money(catalog.shipping.price)}<small>${esc(catalog.shipping.estimate)}. US only.</small></span></label>
+        <label><input type="radio" name="fulfil-${source}" value="pickup" ${how === "pickup" ? "checked" : ""}> <span><b>Local pickup</b> · free<small>${esc(pu.note || "Gene will text you to set a time.")}</small></span></label>
+      </fieldset>`;
+    }
     h += `<div class="sum"><div><span>Items</span><span>${money(priced.subtotal)}</span></div>`;
     h += priced.needsShipping
       ? `<div><span>${esc(catalog.shipping.label)}</span><span>${money(ship)}</span></div>`
-      : `<div><span>Shipping</span><span>None, it's in your hands</span></div>`;
+      : `<div><span>${priced.pickup ? "Local pickup" : "Shipping"}</span><span>${priced.pickup ? "Free" : "None, it's in your hands"}</span></div>`;
     h += `<div class="grand"><span>Total</span><span>${money(priced.subtotal + ship)}</span></div></div>`;
-    if (priced.needsShipping) h += `<p class="help">${esc(catalog.shipping.estimate)}. US addresses only. <span class="todo" data-price-todo-js>TODO: confirm</span></p>`;
     h += `<p class="error" role="alert" data-co-error hidden></p>`;
     h += `<button type="button" class="btn btn-go btn-block" data-checkout ${priced.ok ? "" : "disabled"}>Checkout · ${money(priced.subtotal + ship)}</button>`;
     h += `<p class="help">Secure checkout by Stripe. Card, Apple Pay or Google Pay.</p>`;
@@ -45,6 +52,9 @@ export function mountCart(root, { catalog, stock }, source) {
     if (catalog.pricesConfirmed) root.querySelectorAll("[data-price-todo-js]").forEach((n) => n.remove());
   }
 
+  root.addEventListener("change", (e) => {
+    if (e.target.matches('input[type="radio"][name^="fulfil-"]')) setFulfillment(e.target.value);
+  });
   root.addEventListener("click", async (e) => {
     const b = e.target.closest("button"); if (!b) return;
     const find = (k) => cart().find((x) => x.key === k);

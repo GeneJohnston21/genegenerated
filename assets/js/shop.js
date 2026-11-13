@@ -38,13 +38,21 @@ export function setQty(key, qty) {
 export function removeItem(key) { writeCart(cart().filter((x) => x.key !== key)); }
 export function clearCart() { writeCart([]); }
 
+const FKEY = "gg-fulfillment";
+export function fulfillment() { try { return localStorage.getItem(FKEY) === "pickup" ? "pickup" : "ship"; } catch { return "ship"; } }
+export function setFulfillment(v) {
+  try { localStorage.setItem(FKEY, v === "pickup" ? "pickup" : "ship"); } catch {}
+  window.dispatchEvent(new CustomEvent("cart:change", { detail: cart() }));
+}
+
 export async function checkout(source) {
   const items = cart();
-  try { sessionStorage.setItem("gg-last-order", JSON.stringify({ items, source, at: Date.now() })); } catch {}
+  const how = fulfillment();
+  try { sessionStorage.setItem("gg-last-order", JSON.stringify({ items, source, fulfillment: how, at: Date.now() })); } catch {}
   const res = await fetch("/api/checkout", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ cart: items, source }),
+    body: JSON.stringify({ cart: items, source, fulfillment: how }),
   });
   let data = {};
   try { data = await res.json(); } catch {}

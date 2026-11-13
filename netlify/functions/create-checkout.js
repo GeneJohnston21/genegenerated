@@ -47,8 +47,9 @@ exports.handler = async (event) => {
   let body;
   try { body = JSON.parse(event.body || "{}"); } catch { return json(400, { error: "Bad request." }); }
   const source = body.source === "booth" ? "booth" : "web";
+  const fulfillment = body.fulfillment === "pickup" ? "pickup" : "ship";
 
-  const priced = priceCart(body.cart, catalog, stock);
+  const priced = priceCart(body.cart, catalog, stock, { fulfillment });
   if (!priced.ok) return json(400, { error: priced.errors[0] || "Please check your cart.", errors: priced.errors });
 
   // Real-money checkout only for prices Gene has confirmed: everything (pricesConfirmed), or a
@@ -84,8 +85,8 @@ exports.handler = async (event) => {
       optional: "true",
       dropdown: { options: [{ label: "Yes, that's fine", value: "yes" }, { label: "No thanks", value: "no" }] },
     }],
-    metadata: { source },
-    payment_intent_data: { metadata: { source } },
+    metadata: { source, fulfillment: priced.pickup ? "PICKUP" : priced.needsShipping ? "SHIP" : "TABLE" },
+    payment_intent_data: { metadata: { source, fulfillment: priced.pickup ? "PICKUP" : priced.needsShipping ? "SHIP" : "TABLE" } },
   };
 
   // One metadata entry per item, so every order shows its exact design in the Stripe dashboard.
@@ -93,6 +94,10 @@ exports.handler = async (event) => {
     const text = it.kind === "shop" ? `SHOP ${it.id}` : it.kind === "table" ? `TABLE ${it.id}` : `${it.kind.toUpperCase()} "${it.text}" ${it.year} ${it.shape} ${it.scheme}${it.kind === "photo" ? (it.install ? " INSTALL-PHOTO" : " customer-photo") : ""}`;
     params.metadata[`item_${i + 1}`] = `${it.qty}x ${text}`.slice(0, 500);
   });
+
+  if (priced.pickup) {
+    params.custom_text = { submit: { message: ((catalog.pickup && catalog.pickup.note) || "Local pickup: Gene will text you to set a time.").slice(0, 1000) } };
+  }
 
   if (priced.needsShipping) {
     params.shipping_address_collection = { allowed_countries: catalog.shipping.countries };

@@ -193,7 +193,7 @@ p { margin: 0; }
 .field { display: grid; gap: 6px; }
 .field > label, .label { font-weight: 800; font-size: .95rem; }
 .help { color: var(--dim); font-size: .88rem; }
-input[type="text"], input[type="email"], input[type="number"], textarea, select {
+input[type="text"], input[type="email"], input[type="number"], input[type="tel"], input[type="date"], textarea, select {
   width: 100%; font: inherit; color: var(--snow); background: var(--night-2);
   border: 1.5px solid #ffffff2e; border-radius: 12px; padding: 12px 14px;
 }
@@ -308,3 +308,57 @@ dialog.sheet .cart { border-radius: 0; border: 0; padding-bottom: calc(24px + en
 .shop-link:hover { border-color: var(--gold); }
 .shop-img.orn-img { display: grid; place-items: center; background: radial-gradient(circle at 50% 45%, #1c2654, #0a0f24); }
 .shop-img.orn-img svg { width: 62%; }
+
+/* Ship or pick up */
+.fulfil { border: 0; padding: 0; margin: 14px 0 4px; display: grid; gap: 8px; }
+.fulfil legend { font-weight: 800; margin-bottom: 6px; }
+.fulfil label { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
+.fulfil label:has(input:checked) { border-color: var(--gold); background: #ffc14512; }
+.fulfil input { margin-top: 4px; accent-color: var(--gold); }
+.fulfil small { display: block; color: var(--dim); font-size: .85rem; }
+
+.shop-img { display: block; }
+.card-link { color: inherit; text-decoration: none; }
+.card-link:hover { text-decoration: underline; text-decoration-color: var(--gold); }
+.shop-img.orn-img svg[viewBox="0 0 120 120"] { width: 70%; }
+
+/* Custom work page */
+.hero-slim { padding-block: 28px 40px; }
+.hero-slim h1 em { font-style: normal; color: var(--gold); }
+.bust-grid { display: grid; gap: 28px; margin-top: 24px; align-items: start; }
+@media (min-width: 860px) { .bust-grid { grid-template-columns: 1.1fr 1fr; } }
+.bust-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin: 0; min-width: 0; }
+.bust-grid > * { min-width: 0; }
+.bust-pair .ph span { font-size: .85rem; }
+.bust-pair img, .bust-pair .ph { aspect-ratio: 1; width: 100%; border-radius: var(--radius); object-fit: cover; background: #f7f5f2; }
+.bust-pair .ph { display: grid; place-content: center; text-align: center; gap: 6px; color: #5b5650; padding: 12px; }
+.bust-pair .ph b { font: 700 1.4rem var(--f-display); }
+.bust-pair figcaption { grid-column: 1 / -1; color: var(--dim); font-size: .95rem; }
+.steps.steps-1 { grid-template-columns: 1fr; }
+.facts { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 8px; color: var(--dim); }
+.facts b { color: var(--snow); }
+.pick { display: flex; flex-wrap: wrap; gap: 8px; }
+.pick label { display: inline-flex; gap: 8px; align-items: center; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; font-weight: 700; }
+.pick label:has(input:checked) { border-color: var(--gold); background: #ffc14514; }
+.pick input { accent-color: var(--gold); }
+.contact-form input[type="file"] { font: inherit; color: var(--dim); }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: .95rem; color: var(--dim); }
+.check input { margin-top: 5px; accent-color: var(--gold); }
+
+/* Product pages */
+.product-page { padding-block: 20px 56px; }
+.crumbs { font-size: .9rem; color: var(--dim); margin-bottom: 18px; }
+.crumbs a { color: var(--dim); }
+.pp-grid { display: grid; gap: 28px; }
+@media (min-width: 860px) { .pp-grid { grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: start; } }
+.pp-main { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius); background: #f7f5f2; display: block; }
+.pp-thumbs { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.pp-thumbs button { padding: 0; border: 2px solid transparent; border-radius: 12px; background: none; cursor: pointer; width: 76px; }
+.pp-thumbs button[aria-pressed="true"] { border-color: var(--gold); }
+.pp-thumbs img { width: 100%; height: auto; display: block; border-radius: 10px; }
+.pp-info h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-top: 6px; }
+.pp-price { font: 700 1.8rem var(--f-display); color: var(--gold); margin: 10px 0 6px; }
+.pp-info .lede { color: var(--dim); font-size: 1.1rem; }
+.pp-buy { margin-top: 22px; }
+.pp-related { margin-top: 56px; }
+.pp-related .shop-body { padding: 12px 14px 14px; }

@@ -35,24 +35,28 @@ async function main() {
     const items = catalog.shop.items.filter((x) => x.show);
     const count = (subId) => items.filter((x) => x.category === subId).length;
     // Only show what has stock: a subcategory with items, a department with any such subcategory.
+    // A department either holds stock subcategories (shown once they have items) or offers
+    // (custom work: each offer is one card linking to its own page).
     const depts = (catalog.shop.departments || [])
-      .map((d) => ({ ...d, subs: (d.subs || []).filter((s) => count(s.id) > 0) }))
-      .filter((d) => d.link || d.subs.length);
+      .map((d) => d.offers ? { ...d, subs: d.offers.map((o) => ({ ...o, offer: true })) }
+                           : { ...d, subs: (d.subs || []).filter((s) => count(s.id) > 0) })
+      .filter((d) => d.subs.length);
     const subOf = {}; depts.forEach((d) => d.subs.forEach((s) => (subOf[s.id] = { sub: s, dept: d })));
     const deptCount = (d) => d.subs.reduce((a, s) => a + count(s.id), 0);
+    const offers = depts.flatMap((d) => d.subs.filter((s) => s.offer));
 
     const card = (x) => {
       const where = subOf[x.category];
       const tag = [where && where.sub.label, x.type].filter(Boolean).join(" · ");
       return `
       <article class="shop-card${x.images.length > 1 ? " has-alt" : ""}">
-        <div class="shop-img">
-          <img src="${x.images[0]}" alt="${esc(x.name)}" loading="lazy" width="1000" height="1000">
+        <a class="shop-img" href="/shop/${esc(x.id)}/" tabindex="-1" aria-hidden="true">
+          <img src="${x.images[0]}" alt="" loading="lazy" width="1000" height="1000">
           ${x.images[1] ? `<img class="alt" src="${x.images[1]}" alt="" loading="lazy" width="1000" height="1000">` : ""}
-        </div>
+        </a>
         <div class="shop-body">
           <p class="shop-cat">${esc(tag)}</p>
-          <h3>${esc(x.name)}</h3>
+          <h3><a class="card-link" href="/shop/${esc(x.id)}/">${esc(x.name)}</a></h3>
           <p>${esc(x.blurb)}</p>
           <div class="shop-buy">
             <span class="price">${money(x.price)}</span>
@@ -63,16 +67,24 @@ async function main() {
         </div>
       </article>`;
     };
-    const linkCard = (d) => `
-      <a class="shop-card shop-link" href="${esc(d.link)}">
-        <div class="shop-img orn-img">${ornamentSVG({ kind: "name", text: "Emma", shape: "bauble", scheme: "classic" }, S)}</div>
+    const BUST_SVG = `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="mrb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f1ec"/><stop offset=".55" stop-color="#d9d4cc"/><stop offset="1" stop-color="#b9b2a8"/></linearGradient></defs><ellipse cx="60" cy="40" rx="19" ry="23" fill="url(#mrb)"/><path d="M52 60 h16 v8 c14 3 26 10 30 24 H22 c4-14 16-21 30-24z" fill="url(#mrb)"/><rect x="34" y="92" width="52" height="10" rx="2" fill="#a8a196"/><path d="M48 30 c6 4 18 4 24-1" stroke="#c9c2b8" stroke-width="1.2" fill="none"/></svg>`;
+    const linkCard = (o) => {
+      const art = o.image ? `<img src="${esc(o.image)}" alt="" loading="lazy" width="1000" height="1000">`
+        : o.id === "busts" ? BUST_SVG
+        : ornamentSVG({ kind: "name", text: "Emma", shape: "bauble", scheme: "classic" }, S);
+      const priceLine = o.price_text || `from ${money(Math.min(name.unit, photo.unit))}`;
+      const cta = o.id === "ornaments" ? "Start designing" : "Get a quote";
+      return `
+      <a class="shop-card shop-link" href="${esc(o.link)}">
+        <div class="shop-img ${o.image ? "" : "orn-img"}">${art}</div>
         <div class="shop-body">
-          <p class="shop-cat">${esc(d.label)}</p>
-          <h3>Design your own</h3>
-          <p>${esc(d.blurb || "")}</p>
-          <div class="shop-buy"><span class="price">from ${money(Math.min(name.unit, photo.unit))}</span><span class="btn btn-small" aria-hidden="true">Start designing</span></div>
+          <p class="shop-cat">${esc(o.label)}</p>
+          <h3>${esc(o.title || o.label)}</h3>
+          <p>${esc(o.blurb || "")}</p>
+          <div class="shop-buy"><span class="price">${esc(priceLine)}</span><span class="btn btn-small" aria-hidden="true">${cta}</span></div>
         </div>
       </a>`;
+    };
 
     // current = "all" | a department id | a subcategory id
     const valid = (id) => id === "all" || depts.some((d) => d.id === id) || !!subOf[id];
@@ -83,20 +95,20 @@ async function main() {
     const render = () => {
       const dept = deptOf(current);
       chips.innerHTML = [`<button type="button" class="chip" data-cat="all" aria-pressed="${current === "all"}">All <span>${items.length}</span></button>`]
-        .concat(depts.map((d) => `<button type="button" class="chip" data-cat="${esc(d.id)}" aria-pressed="${!!dept && dept.id === d.id}">${esc(d.label)}${d.link ? "" : ` <span>${deptCount(d)}</span>`}</button>`))
+        .concat(depts.map((d) => `<button type="button" class="chip" data-cat="${esc(d.id)}" aria-pressed="${!!dept && dept.id === d.id}">${esc(d.label)}${d.offers ? "" : ` <span>${deptCount(d)}</span>`}</button>`))
         .join("");
       if (dept && dept.subs.length) {
         subChips.hidden = false;
         subChips.setAttribute("aria-label", `${dept.label}: filter further`);
         subChips.innerHTML = [`<button type="button" class="chip chip-sub" data-cat="${esc(dept.id)}" aria-pressed="${current === dept.id}">All ${esc(dept.label.toLowerCase())}</button>`]
-          .concat(dept.subs.map((s) => `<button type="button" class="chip chip-sub" data-cat="${esc(s.id)}" aria-pressed="${current === s.id}">${esc(s.label)} <span>${count(s.id)}</span></button>`))
+          .concat(dept.subs.map((s) => `<button type="button" class="chip chip-sub" data-cat="${esc(s.id)}" aria-pressed="${current === s.id}">${esc(s.label)}${s.offer ? "" : ` <span>${count(s.id)}</span>`}</button>`))
           .join("");
       } else { subChips.hidden = true; subChips.innerHTML = ""; }
 
       let show, links;
-      if (current === "all") { show = items; links = depts.filter((d) => d.link); }
-      else if (subOf[current]) { show = items.filter((x) => x.category === current); links = []; }
-      else { const ids = dept.subs.map((s) => s.id); show = items.filter((x) => ids.includes(x.category)); links = dept.link ? [dept] : []; }
+      if (current === "all") { show = items; links = offers; }
+      else if (subOf[current]) { const s = subOf[current].sub; show = s.offer ? [] : items.filter((x) => x.category === current); links = s.offer ? [s] : []; }
+      else { const ids = dept.subs.map((s) => s.id); show = items.filter((x) => ids.includes(x.category)); links = dept.subs.filter((s) => s.offer); }
       grid.innerHTML = show.map(card).join("") + links.map(linkCard).join("");
     };
     render();
