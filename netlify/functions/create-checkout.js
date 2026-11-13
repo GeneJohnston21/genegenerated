@@ -36,10 +36,11 @@ function siteOrigin(event) {
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") return json(405, { error: "Use POST." });
 
-  const key = process.env.STRIPE_SECRET_KEY;
+  // Tolerate stray whitespace or quotes from copy-pasting the key into Netlify.
+  const key = (process.env.STRIPE_SECRET_KEY || "").trim().replace(/^["']+|["']+$/g, "").trim();
   if (!key) return json(503, { error: "Online checkout isn't switched on yet. Please order at the table or use the contact form." });
   if (!/^(sk|rk)_(test|live)_/.test(key)) {
-    console.error("STRIPE_SECRET_KEY is not a Stripe secret key (it should start with sk_test_, sk_live_, rk_test_ or rk_live_).");
+    console.error(`STRIPE_SECRET_KEY is not a Stripe secret key. It starts with "${key.slice(0, 8)}" but should start with sk_test_ or sk_live_ (publishable pk_ keys do not work).`);
     return json(503, { error: "Online checkout isn't set up correctly yet. Please order at the table or use the contact form." });
   }
   if (/^(sk|rk)_live_/.test(key) && !catalog.pricesConfirmed) {
