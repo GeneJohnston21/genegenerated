@@ -97,3 +97,15 @@ Check with `dig +short genegenerated.com` and `dig +short www.genegenerated.com`
 
 ## The booth QR code
 `assets/qr/booth-qr-print.png` is 1800×1800 px and prints sharp at 6 inches. It points to `https://genegenerated.com/booth.html`, so it only works once the domain is live. Test it with your phone camera before printing.
+
+
+## Adding a ready-made product
+
+1. Photos: `python tools/clean_photos.py raw/ cleaned/`, check each one, copy the keepers to
+   `assets/img/shop/<id>-1.jpg`, `-2.jpg` (the second shows on mouse hover).
+2. Add an entry to `shop.items` in `data/catalog.json`: `id` (never reused), `name`, `category`
+   (a subcategory id from `shop.departments`, e.g. `christmas`, `halloween`, `controller-holders`,
+   `fidgets`), `type` (short label like "Candy bowl"), `blurb`, `price` in cents, `images`,
+   `show`, `available`.
+3. Departments and subcategories appear on the site on their own once something visible is in
+   them. To add a new subcategory, add it under its department in `shop.departments`.

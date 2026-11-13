@@ -299,7 +299,10 @@ dialog.sheet .cart { border-radius: 0; border: 0; padding-bottom: calc(24px + en
 .chip span { opacity: .7; font-weight: 800; margin-left: 2px; }
 .chip:hover { color: var(--snow); border-color: #ffffff40; }
 .chip[aria-pressed="true"] { background: var(--gold); color: var(--on-gold); border-color: var(--gold); }
-.chips + .shop-grid { margin-top: 18px; }
+.chips + .shop-grid, .chips-sub + .shop-grid { margin-top: 18px; }
+.chips-sub { margin-top: 10px; }
+.chip-sub { font-size: .85rem; padding: 8px 14px; background: transparent; }
+.chip-sub[aria-pressed="true"] { background: var(--snow); color: var(--night); border-color: var(--snow); }
 .shop-cat { font: 700 .72rem/1 var(--f-body) !important; letter-spacing: .12em; text-transform: uppercase; color: var(--gold) !important; flex: none !important; }
 .shop-link { text-decoration: none; color: inherit; }
 .shop-link:hover { border-color: var(--gold); }

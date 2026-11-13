@@ -25,21 +25,33 @@ async function main() {
 
   document.querySelectorAll("[data-draw]").forEach((el) => { el.innerHTML = ornamentSVG(JSON.parse(el.dataset.draw), S); });
 
-  // Ready-made pieces, from catalog.shop, filtered by category chips (?cat=... keeps the choice shareable)
+  // Ready-made pieces, from catalog.shop. Two levels of filter: departments (Holidays, Gaming...)
+  // and their subcategories (Christmas, Halloween...). ?cat= holds either id, so both are linkable.
   const grid = document.querySelector("[data-shop]");
   const chips = document.querySelector("[data-shop-cats]");
+  const subChips = document.querySelector("[data-shop-subs]");
   if (grid && catalog.shop) {
     const esc = (t) => String(t).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
     const items = catalog.shop.items.filter((x) => x.show);
-    const cats = (catalog.shop.categories || []).filter((c) => c.link || items.some((x) => x.category === c.id));
-    const card = (x) => `
+    const count = (subId) => items.filter((x) => x.category === subId).length;
+    // Only show what has stock: a subcategory with items, a department with any such subcategory.
+    const depts = (catalog.shop.departments || [])
+      .map((d) => ({ ...d, subs: (d.subs || []).filter((s) => count(s.id) > 0) }))
+      .filter((d) => d.link || d.subs.length);
+    const subOf = {}; depts.forEach((d) => d.subs.forEach((s) => (subOf[s.id] = { sub: s, dept: d })));
+    const deptCount = (d) => d.subs.reduce((a, s) => a + count(s.id), 0);
+
+    const card = (x) => {
+      const where = subOf[x.category];
+      const tag = [where && where.sub.label, x.type].filter(Boolean).join(" · ");
+      return `
       <article class="shop-card${x.images.length > 1 ? " has-alt" : ""}">
         <div class="shop-img">
           <img src="${x.images[0]}" alt="${esc(x.name)}" loading="lazy" width="1000" height="1000">
           ${x.images[1] ? `<img class="alt" src="${x.images[1]}" alt="" loading="lazy" width="1000" height="1000">` : ""}
         </div>
         <div class="shop-body">
-          <p class="shop-cat">${esc((cats.find((c) => c.id === x.category) || {}).label || "")}</p>
+          <p class="shop-cat">${esc(tag)}</p>
           <h3>${esc(x.name)}</h3>
           <p>${esc(x.blurb)}</p>
           <div class="shop-buy">
@@ -50,43 +62,57 @@ async function main() {
           </div>
         </div>
       </article>`;
-    const linkCard = (c) => `
-      <a class="shop-card shop-link" href="${esc(c.link)}">
+    };
+    const linkCard = (d) => `
+      <a class="shop-card shop-link" href="${esc(d.link)}">
         <div class="shop-img orn-img">${ornamentSVG({ kind: "name", text: "Emma", shape: "bauble", scheme: "classic" }, S)}</div>
         <div class="shop-body">
-          <p class="shop-cat">${esc(c.label)}</p>
+          <p class="shop-cat">${esc(d.label)}</p>
           <h3>Design your own</h3>
-          <p>${esc(c.blurb || "")}</p>
+          <p>${esc(d.blurb || "")}</p>
           <div class="shop-buy"><span class="price">from ${money(Math.min(name.unit, photo.unit))}</span><span class="btn btn-small" aria-hidden="true">Start designing</span></div>
         </div>
       </a>`;
 
-    const valid = (id) => id === "all" || cats.some((c) => c.id === id);
+    // current = "all" | a department id | a subcategory id
+    const valid = (id) => id === "all" || depts.some((d) => d.id === id) || !!subOf[id];
     let current = new URLSearchParams(location.search).get("cat");
     if (!valid(current)) current = "all";
+    const deptOf = (id) => depts.find((d) => d.id === id) || (subOf[id] && subOf[id].dept) || null;
 
     const render = () => {
-      if (chips) {
-        const n = (id) => items.filter((x) => x.category === id).length;
-        chips.innerHTML = [`<button type="button" class="chip" data-cat="all" aria-pressed="${current === "all"}">All <span>${items.length}</span></button>`]
-          .concat(cats.map((c) => `<button type="button" class="chip" data-cat="${esc(c.id)}" aria-pressed="${current === c.id}">${esc(c.label)}${c.link ? "" : ` <span>${n(c.id)}</span>`}</button>`))
+      const dept = deptOf(current);
+      chips.innerHTML = [`<button type="button" class="chip" data-cat="all" aria-pressed="${current === "all"}">All <span>${items.length}</span></button>`]
+        .concat(depts.map((d) => `<button type="button" class="chip" data-cat="${esc(d.id)}" aria-pressed="${!!dept && dept.id === d.id}">${esc(d.label)}${d.link ? "" : ` <span>${deptCount(d)}</span>`}</button>`))
+        .join("");
+      if (dept && dept.subs.length) {
+        subChips.hidden = false;
+        subChips.setAttribute("aria-label", `${dept.label}: filter further`);
+        subChips.innerHTML = [`<button type="button" class="chip chip-sub" data-cat="${esc(dept.id)}" aria-pressed="${current === dept.id}">All ${esc(dept.label.toLowerCase())}</button>`]
+          .concat(dept.subs.map((s) => `<button type="button" class="chip chip-sub" data-cat="${esc(s.id)}" aria-pressed="${current === s.id}">${esc(s.label)} <span>${count(s.id)}</span></button>`))
           .join("");
-      }
-      const show = current === "all" ? items : items.filter((x) => x.category === current);
-      const links = cats.filter((c) => c.link && (current === "all" || current === c.id));
+      } else { subChips.hidden = true; subChips.innerHTML = ""; }
+
+      let show, links;
+      if (current === "all") { show = items; links = depts.filter((d) => d.link); }
+      else if (subOf[current]) { show = items.filter((x) => x.category === current); links = []; }
+      else { const ids = dept.subs.map((s) => s.id); show = items.filter((x) => ids.includes(x.category)); links = dept.link ? [dept] : []; }
       grid.innerHTML = show.map(card).join("") + links.map(linkCard).join("");
     };
     render();
 
-    chips?.addEventListener("click", (e) => {
+    const pick = (e) => {
       const b = e.target.closest("[data-cat]"); if (!b) return;
       current = b.dataset.cat;
       const url = new URL(location.href);
       if (current === "all") url.searchParams.delete("cat"); else url.searchParams.set("cat", current);
       history.replaceState(null, "", url);
+      const inSubs = !!e.target.closest("[data-shop-subs]");
       render();
-      chips.querySelector(`[data-cat="${current}"]`)?.focus();
-    });
+      (inSubs ? subChips : chips).querySelector(`[data-cat="${current}"]`)?.focus();
+    };
+    chips.addEventListener("click", pick);
+    subChips.addEventListener("click", pick);
 
     const status = document.querySelector("[data-shop-status]");
     grid.addEventListener("click", (e) => {
